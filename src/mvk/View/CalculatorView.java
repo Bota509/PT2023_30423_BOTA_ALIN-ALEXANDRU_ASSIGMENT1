@@ -5,19 +5,15 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CalculatorView extends  JFrame{
-
-
     ///clasa care se ocupa strict de parte de UI
     private JPanel contentPane;
     private JTextField textFieldPolynom1;
     private JTextField textFieldPolynom2;
-
     private JButton buttonSum;
     private JButton buttonSubstraction;
     private JButton buttonMultiplication;
     private JButton buttonDivison;
     private JButton buttonDerivative;
-
     private JButton buttonIntegartion;
     private  JTextArea textAreaSumText;
     private JTextArea textAreaSubstractionText;

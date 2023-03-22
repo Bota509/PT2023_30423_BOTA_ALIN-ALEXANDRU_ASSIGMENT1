@@ -6,8 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -184,8 +182,37 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-
+                refreshHashMaps();
                read();
+
+                HashMap<Integer, Double> quotient = new HashMap<>();
+                HashMap<Integer, Double> remainder = new HashMap<>(polynomials1.getPolynomial());
+
+                while (remainder.size() >= polynomials2.getPolynomial().size()) {
+                    // Get the highest power terms of the dividend and divisor
+                    int dividendPower = Collections.max(remainder.keySet());
+                    int divisorPower = Collections.max(polynomials2.getPolynomial().keySet());
+
+                    // Calculate the coefficient and power of the next term in the quotient
+                    double quotientCoefficient = remainder.get(dividendPower) / polynomials2.getPolynomial().get(divisorPower);
+                    int quotientPower = dividendPower - divisorPower;
+
+                    // Add the next term to the quotient
+                    resultPolynomial1.getPolynomial().put(quotientPower, quotientCoefficient);
+
+                    // Subtract the divisor times the next term in the quotient from the remainder
+                    for (int power : polynomials2.getPolynomial().keySet()) {
+                        double coefficient = polynomials2.getPolynomial().get(power) * quotientCoefficient;
+                        int remainderPower = power + quotientPower;
+                        double remainderCoefficient = remainder.getOrDefault(remainderPower, 0.0);
+                        remainder.put(remainderPower, remainderCoefficient - coefficient);
+                    }
+
+                    // Remove any terms with zero coefficients from the remainder
+                    remainder.entrySet().removeIf(entry -> entry.getValue() == 0);
+                }
+                polynomials1.displayResultedPolynomInOrder("div",resultPolynomial1,calculatorView);
+
         }
     }
 
@@ -208,8 +235,6 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
                 }
             }
-
-
             for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
             {
                 if(entry.getKey()>0)
@@ -259,6 +284,4 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
             polynomials2.displayResultedPolynomInOrder("int2",resultPolynomials2,calculatorView);
         }
     }
-
-
 }
