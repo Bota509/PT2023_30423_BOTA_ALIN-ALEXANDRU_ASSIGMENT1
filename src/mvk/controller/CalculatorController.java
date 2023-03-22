@@ -14,19 +14,21 @@ import java.util.List;
 public class CalculatorController {
 //clasa care se ocupa de actiunile pe care le face utilizatorul
 private CalculatorView calculatorView;
+private Polynomials polynomials;
 private Polynomials polynomials1;
 private Polynomials polynomials2;
 private Polynomials resultPolynomial1;
-    private Polynomials resultPolynomials2;
-private boolean isRead = false;
+private Polynomials resultPolynomials2;
 
-public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials1,Polynomials resultPolynomials2)
+
+public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials1,Polynomials resultPolynomials2,Polynomials polynomials)
 {
     this.calculatorView = calculatorView;
     this.polynomials1 = polynomials1;
     this.polynomials2 = polynomials2;
     this.resultPolynomial1 = resultPolynomials1;
     this.resultPolynomials2 = resultPolynomials2;
+    this.polynomials = polynomials;
 
     this.calculatorView.sumListener(new SumListener());
     this.calculatorView.substractionListener(new SubstractionListener());
@@ -38,7 +40,6 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
 
     public void read()
     {
-        isRead=true;
         String polynomString1 = calculatorView.getTextFieldPolynom1();
         String polynomString2 = calculatorView.getTextFieldPolynom2();
 
@@ -93,8 +94,6 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
         }
     }
 
-
-
     public void refreshHashMaps()
     {
         resultPolynomial1.getPolynomial().clear();
@@ -126,74 +125,12 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
                 }
             }
-            displayResultedPolynomInOrder("sum", CalculatorController.this.resultPolynomial1);
+            polynomials1.displayResultedPolynomInOrder("sum", resultPolynomial1,calculatorView);
         }
     }
 
     //This is used only for displaying the polynomial in descending order by power
-    private void displayResultedPolynomInOrder(String type, Polynomials resultPolynomial) {
-        TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
-        //from the hashmap in order by key -> in this case the power
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.DOWN); //to format de double result in a maximum of 2 decimals
-
-        sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
-        StringBuilder stringBuilder = new StringBuilder();
-        String resultString;
-        for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
-        {
-            String coefficientInString = df.format(entry.getValue());
-            String powerInString = entry.getKey().toString();
-            if(entry.getValue()!=0.0 ) {
-
-                if(entry.getKey()!=0) {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString).append("x^").append(entry.getKey());
-                    else
-                        stringBuilder.append(" ").append(coefficientInString).append("x^").append(entry.getKey());
-                }
-                else if(entry.getKey() == 0)
-                {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString);
-                    else
-                        stringBuilder.append(" ").append(coefficientInString);
-                }
-            }
-        }
-        resultString = stringBuilder.toString();
-        if(type.equals("sum"))       //depends on what type is equal to on displaying on the UI
-         calculatorView.setTextAreaSumText(resultString);
-        else if(type.equals("sub"))
-            calculatorView.setTextAreaSubstractionText(resultString);
-        else if(type.equals("der1")) {
-            calculatorView.setTextAreaDerivationPolynom1Text(resultString);
-        }
-        else if(type.equals("der2")) {
-            calculatorView.setTextAreaDerivationPolynom2Text(resultString);
-        }
-
-        else if(type.equals("int1")) {
-            calculatorView.setTextAreaIntegrationPolynom1Text(resultString);
-        }
-        else if(type.equals("int2")) {
-            calculatorView.setTextAreaIntegrationPolynom2Text(resultString);
-        }
-        else if(type.equals("mul"))
-        {
-            calculatorView.setTextAreaMultiplicationText(resultString);
-        }
-        else  if (type.equals("div"))
-        {
-            calculatorView.setTextAreaDivisionText(resultString);
-        }
-        else
-        {
-            System.out.println("Error");
-        }
-
-    }
 
     class SubstractionListener implements ActionListener
     {
@@ -219,7 +156,7 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomial1.getPolynomial().put(entry.getKey(), -entry.getValue());
                 }
             }
-            displayResultedPolynomInOrder("sub", CalculatorController.this.resultPolynomial1);
+            polynomials1.displayResultedPolynomInOrder("sub", resultPolynomial1,calculatorView);
         }
     }
 
@@ -238,7 +175,7 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomial1.getPolynomial().put(entry1.getKey()+entry2.getKey(),entry1.getValue()*entry2.getValue());
                 }
             }
-            displayResultedPolynomInOrder("mul",resultPolynomial1);
+            polynomials1.displayResultedPolynomInOrder("mul",resultPolynomial1,calculatorView);
 
         }
     }
@@ -282,8 +219,8 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
                 }
             }
-            displayResultedPolynomInOrder("der1",resultPolynomial1);
-            displayResultedPolynomInOrder("der2",resultPolynomials2);
+            polynomials1.displayResultedPolynomInOrder("der1",resultPolynomial1,calculatorView);
+            polynomials2.displayResultedPolynomInOrder("der2",resultPolynomials2,calculatorView);
 
         }
     }
@@ -308,7 +245,7 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
                 }
             }
-            displayResultedPolynomInOrder("int1",resultPolynomial1);
+           polynomials1.displayResultedPolynomInOrder("int1",resultPolynomial1,calculatorView);
             for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
             {
                 if(entry.getKey() >=0)
@@ -319,7 +256,7 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
                 }
             }
-            displayResultedPolynomInOrder("int2",resultPolynomials2);
+            polynomials2.displayResultedPolynomInOrder("int2",resultPolynomials2,calculatorView);
         }
     }
 
