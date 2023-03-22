@@ -14,15 +14,17 @@ public class CalculatorController {
 private CalculatorView calculatorView;
 private Polynomials polynomials1;
 private Polynomials polynomials2;
-private Polynomials resultPolynomials;
+private Polynomials resultPolynomial1;
+    private Polynomials resultPolynomials2;
 private boolean isRead = false;
 
-public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials)
+public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials1,Polynomials resultPolynomials2)
 {
     this.calculatorView = calculatorView;
     this.polynomials1 = polynomials1;
     this.polynomials2 = polynomials2;
-    this.resultPolynomials = resultPolynomials;
+    this.resultPolynomial1 = resultPolynomials1;
+    this.resultPolynomials2 = resultPolynomials2;
 
     this.calculatorView.sumListener(new SumListener());
     this.calculatorView.substractionListener(new SubstractionListener());
@@ -93,7 +95,8 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
 
     public void refreshHashMaps()
     {
-        resultPolynomials.getPolynomial().clear();
+        resultPolynomial1.getPolynomial().clear();
+        resultPolynomials2.getPolynomial().clear();
         polynomials1.getPolynomial().clear();
         polynomials2.getPolynomial().clear();
     }
@@ -102,47 +105,55 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
         @Override
         public void actionPerformed(ActionEvent e) {
             refreshHashMaps();
-
                read();
 
             for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
                 if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
                     double newResult = polynomials1.getPolynomial().get(entry.getKey()) + polynomials2.getPolynomial().get(entry.getKey());
-                    resultPolynomials.getPolynomial().put(entry.getKey(), newResult);
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
                 }
                 else
                 {
-                    resultPolynomials.getPolynomial().put(entry.getKey(), entry.getValue());
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
                 }
             }
             for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
             {
-                if(!resultPolynomials.getPolynomial().containsKey(entry.getKey()))
+                if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
                 {
-                    resultPolynomials.getPolynomial().put(entry.getKey(), entry.getValue());
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
                 }
             }
-            displayResultedPolynomInOrder("sum");
+            displayResultedPolynomInOrder("sum", CalculatorController.this.resultPolynomial1);
         }
     }
 
     //This is used only for displaying the polynomial in descending order by power
-    private void displayResultedPolynomInOrder(String type) {
+    private void displayResultedPolynomInOrder(String type, Polynomials resultPolynomial) {
         TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
         //from the hashmap in order by key -> in this case the power
-        sortedDescendingdMap.putAll(resultPolynomials.getPolynomial());
+        sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
         StringBuilder stringBuilder = new StringBuilder();
         String resultString;
         for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
         {
             String coefficientInString = entry.getValue().toString();
             String powerInString = entry.getKey().toString();
-            if(entry.getValue()!=0.0 && entry.getKey()!=0) {
+            if(entry.getValue()!=0.0 ) {  //TREBUIE REPARATII PENTRU CAND X = 0
 
-                if (entry.getValue() > 0.0)
-                    stringBuilder.append(" +").append(entry.getValue()).append("x^").append(entry.getKey());
-                else
-                    stringBuilder.append(" ").append(entry.getValue()).append("x^").append(entry.getKey());
+                if(entry.getKey()!=0) {
+                    if (entry.getValue() > 0.0)
+                        stringBuilder.append(" +").append(entry.getValue()).append("x^").append(entry.getKey());
+                    else
+                        stringBuilder.append(" ").append(entry.getValue()).append("x^").append(entry.getKey());
+                }
+                else if(entry.getKey() == 0)
+                {
+                    if (entry.getValue() > 0.0)
+                        stringBuilder.append(" +").append(entry.getValue()).append(entry.getKey());
+                    else
+                        stringBuilder.append(" ").append(entry.getValue()).append(entry.getKey());
+                }
             }
         }
         resultString = stringBuilder.toString();
@@ -150,6 +161,32 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
          calculatorView.setTextAreaSumText(resultString);
         else if(type.equals("sub"))
             calculatorView.setTextAreaSubstractionText(resultString);
+        else if(type.equals("der1")) {
+            calculatorView.setTextAreaDerivationPolynom1Text(resultString);
+        }
+        else if(type.equals("der2")) {
+            calculatorView.setTextAreaDerivationPolynom2Text(resultString);
+        }
+
+        else if(type.equals("int1")) {
+            calculatorView.setTextAreaIntegrationPolynom1Text(resultString);
+        }
+        else if(type.equals("int2")) {
+            calculatorView.setTextAreaIntegrationPolynom2Text(resultString);
+        }
+        else if(type.equals("mul"))
+        {
+            calculatorView.setTextAreaMultiplicationText(resultString);
+        }
+        else  if (type.equals("div"))
+        {
+            calculatorView.setTextAreaDivisionText(resultString);
+        }
+        else
+        {
+            System.out.println("Error");
+        }
+
     }
 
     class SubstractionListener implements ActionListener
@@ -162,21 +199,21 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
             for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
                 if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
                     double newResult = polynomials1.getPolynomial().get(entry.getKey()) - polynomials2.getPolynomial().get(entry.getKey());
-                    resultPolynomials.getPolynomial().put(entry.getKey(), newResult);
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
                 }
                 else
                 {
-                    resultPolynomials.getPolynomial().put(entry.getKey(), entry.getValue());
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
                 }
             }
             for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
             {
-                if(!resultPolynomials.getPolynomial().containsKey(entry.getKey()))
+                if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
                 {
-                    resultPolynomials.getPolynomial().put(entry.getKey(), -entry.getValue());
+                    resultPolynomial1.getPolynomial().put(entry.getKey(), -entry.getValue());
                 }
             }
-            displayResultedPolynomInOrder("sub");
+            displayResultedPolynomInOrder("sub", CalculatorController.this.resultPolynomial1);
         }
     }
 
@@ -203,7 +240,34 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
         @Override
         public void actionPerformed(ActionEvent e) {
 
-              read();
+            refreshHashMaps();
+            read();
+
+            double newCoefficient;
+            int newPower;
+            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet())
+            {
+                if(entry.getKey()>0)
+                {
+                    newCoefficient = entry.getKey() * entry.getValue();
+                    newPower = entry.getKey() - 1;
+                    resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
+                }
+            }
+
+
+            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
+            {
+                if(entry.getKey()>0)
+                {
+                    newCoefficient = entry.getKey() * entry.getValue();
+                    newPower = entry.getKey() - 1;
+                    resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
+                }
+            }
+            displayResultedPolynomInOrder("der1",resultPolynomial1);
+            displayResultedPolynomInOrder("der2",resultPolynomials2);
+
         }
     }
 
