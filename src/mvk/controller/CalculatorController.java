@@ -228,7 +228,18 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
         @Override
         public void actionPerformed(ActionEvent e) {
 
-                read();
+            refreshHashMaps();
+            read();
+
+            for (Map.Entry<Integer, Double> entry1 : polynomials1.getPolynomial().entrySet())
+            {
+                for (Map.Entry<Integer, Double> entry2 : polynomials2.getPolynomial().entrySet())
+                {
+                    resultPolynomial1.getPolynomial().put(entry1.getKey()+entry2.getKey(),entry1.getValue()*entry2.getValue());
+                }
+            }
+            displayResultedPolynomInOrder("mul",resultPolynomial1);
+
         }
     }
 
