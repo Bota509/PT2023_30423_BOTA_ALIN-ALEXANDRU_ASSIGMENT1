@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -132,27 +134,31 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
     private void displayResultedPolynomInOrder(String type, Polynomials resultPolynomial) {
         TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
         //from the hashmap in order by key -> in this case the power
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.DOWN); //to format de double result in a maximum of 2 decimals
+
         sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
         StringBuilder stringBuilder = new StringBuilder();
         String resultString;
         for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
         {
-            String coefficientInString = entry.getValue().toString();
+            String coefficientInString = df.format(entry.getValue());
             String powerInString = entry.getKey().toString();
-            if(entry.getValue()!=0.0 ) {  //TREBUIE REPARATII PENTRU CAND X = 0
+            if(entry.getValue()!=0.0 ) {
 
                 if(entry.getKey()!=0) {
                     if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(entry.getValue()).append("x^").append(entry.getKey());
+                        stringBuilder.append(" +").append(coefficientInString).append("x^").append(entry.getKey());
                     else
-                        stringBuilder.append(" ").append(entry.getValue()).append("x^").append(entry.getKey());
+                        stringBuilder.append(" ").append(coefficientInString).append("x^").append(entry.getKey());
                 }
                 else if(entry.getKey() == 0)
                 {
                     if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(entry.getValue()).append(entry.getKey());
+                        stringBuilder.append(" +").append(coefficientInString);
                     else
-                        stringBuilder.append(" ").append(entry.getValue()).append(entry.getKey());
+                        stringBuilder.append(" ").append(coefficientInString);
                 }
             }
         }
@@ -275,8 +281,34 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            refreshHashMaps();
             read();
+            double newCoefficient;
+            int newPower;
+
+
+            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet())
+            {
+                if(entry.getKey() >=0)
+                {
+                    newPower = entry.getKey()+1;
+                    newCoefficient = entry.getValue() / newPower;
+
+                    resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
+                }
+            }
+            displayResultedPolynomInOrder("int1",resultPolynomial1);
+            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
+            {
+                if(entry.getKey() >=0)
+                {
+                    newPower = entry.getKey()+1;
+                    newCoefficient = entry.getValue() / newPower;
+
+                    resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
+                }
+            }
+            displayResultedPolynomInOrder("int2",resultPolynomials2);
         }
     }
 
