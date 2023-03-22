@@ -106,24 +106,29 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
             refreshHashMaps();
                read();
 
-            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
-                if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
-                    double newResult = polynomials1.getPolynomial().get(entry.getKey()) + polynomials2.getPolynomial().get(entry.getKey());
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
-                }
-                else
-                {
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
-                }
-            }
-            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
-            {
-                if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
-                {
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
-                }
-            }
+            sum(polynomials1, polynomials2, resultPolynomial1);
             polynomials1.displayResultedPolynomInOrder("sum", resultPolynomial1,calculatorView);
+        }
+    }
+
+
+    private void sum(Polynomials polynomials1, Polynomials polynomials2, Polynomials resultPolynomial1) {
+        for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
+            if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
+                double newResult = polynomials1.getPolynomial().get(entry.getKey()) + polynomials2.getPolynomial().get(entry.getKey());
+                resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
+            }
+            else
+            {
+                resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
+        {
+            if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
+            {
+                resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -183,18 +188,16 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
         @Override
         public void actionPerformed(ActionEvent e) {
                 refreshHashMaps();
-               read();
+                read();
+               // HashMap<Integer, Double> remainder = new HashMap<>(polynomials1.getPolynomial());
 
-                HashMap<Integer, Double> quotient = new HashMap<>();
-                HashMap<Integer, Double> remainder = new HashMap<>(polynomials1.getPolynomial());
-
-                while (remainder.size() >= polynomials2.getPolynomial().size()) {
+                while (polynomials1.getPolynomial().size() >= polynomials2.getPolynomial().size()) {
                     // Get the highest power terms of the dividend and divisor
-                    int dividendPower = Collections.max(remainder.keySet());
+                    int dividendPower = Collections.max(polynomials1.getPolynomial().keySet());
                     int divisorPower = Collections.max(polynomials2.getPolynomial().keySet());
 
                     // Calculate the coefficient and power of the next term in the quotient
-                    double quotientCoefficient = remainder.get(dividendPower) / polynomials2.getPolynomial().get(divisorPower);
+                    double quotientCoefficient = polynomials1.getPolynomial().get(dividendPower) / polynomials2.getPolynomial().get(divisorPower);
                     int quotientPower = dividendPower - divisorPower;
 
                     // Add the next term to the quotient
@@ -204,14 +207,17 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                     for (int power : polynomials2.getPolynomial().keySet()) {
                         double coefficient = polynomials2.getPolynomial().get(power) * quotientCoefficient;
                         int remainderPower = power + quotientPower;
-                        double remainderCoefficient = remainder.getOrDefault(remainderPower, 0.0);
-                        remainder.put(remainderPower, remainderCoefficient - coefficient);
+                        double remainderCoefficient = polynomials1.getPolynomial().getOrDefault(remainderPower, 0.0);
+                        polynomials1.getPolynomial().put(remainderPower, remainderCoefficient - coefficient);
                     }
 
                     // Remove any terms with zero coefficients from the remainder
-                    remainder.entrySet().removeIf(entry -> entry.getValue() == 0);
+                    polynomials1.getPolynomial().entrySet().removeIf(entry -> entry.getValue() == 0);
                 }
-                polynomials1.displayResultedPolynomInOrder("div",resultPolynomial1,calculatorView);
+                //make the sum between the two hashmaps
+
+                  sum(polynomials1,resultPolynomial1,resultPolynomials2);
+                polynomials1.displayResultedPolynomInOrder("div",resultPolynomials2,calculatorView);
 
         }
     }
