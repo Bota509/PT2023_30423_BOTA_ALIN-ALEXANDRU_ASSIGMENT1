@@ -75,6 +75,10 @@ private HashMap<Integer,Double> polynomial = new HashMap<>();
             }
         }
         resultString = stringBuilder.toString();
+        if(resultString.equals(""))
+        {
+            resultString = "0";
+        }
         if(type.equals("sum"))       //depends on what type is equal to on displaying on the UI
             calculatorView.setTextAreaSumText(resultString);
         else if(type.equals("sub"))

@@ -1,6 +1,7 @@
 package mvk.controller;
 
 import mvk.View.CalculatorView;
+import mvk.models.Operations;
 import mvk.models.Polynomials;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,21 +13,21 @@ import java.util.List;
 public class CalculatorController {
 //clasa care se ocupa de actiunile pe care le face utilizatorul
 private CalculatorView calculatorView;
-private Polynomials polynomials;
 private Polynomials polynomials1;
 private Polynomials polynomials2;
 private Polynomials resultPolynomial1;
 private Polynomials resultPolynomials2;
+private Operations operations;
 
 
-public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials1,Polynomials resultPolynomials2,Polynomials polynomials)
+public  CalculatorController(CalculatorView calculatorView, Polynomials polynomials1,Polynomials polynomials2,Polynomials resultPolynomials1,Polynomials resultPolynomials2,Operations operations)
 {
     this.calculatorView = calculatorView;
     this.polynomials1 = polynomials1;
     this.polynomials2 = polynomials2;
     this.resultPolynomial1 = resultPolynomials1;
     this.resultPolynomials2 = resultPolynomials2;
-    this.polynomials = polynomials;
+    this.operations = operations;
 
     this.calculatorView.sumListener(new SumListener());
     this.calculatorView.substractionListener(new SubstractionListener());
@@ -106,59 +107,18 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
             refreshHashMaps();
                read();
 
-            sum(polynomials1, polynomials2, resultPolynomial1);
+            resultPolynomial1 = operations.sum(polynomials1, polynomials2);
             polynomials1.displayResultedPolynomInOrder("sum", resultPolynomial1,calculatorView);
         }
     }
-
-
-    private void sum(Polynomials polynomials1, Polynomials polynomials2, Polynomials resultPolynomial1) {
-        for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
-            if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
-                double newResult = polynomials1.getPolynomial().get(entry.getKey()) + polynomials2.getPolynomial().get(entry.getKey());
-                resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
-            }
-            else
-            {
-                resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
-            }
-        }
-        for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
-        {
-            if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
-            {
-                resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-
-    //This is used only for displaying the polynomial in descending order by power
-
 
     class SubstractionListener implements ActionListener
     {
         @Override
         public void actionPerformed(ActionEvent e) {
             refreshHashMaps();
-
               read();
-            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet()) {
-                if (polynomials2.getPolynomial().containsKey(entry.getKey())) {
-                    double newResult = polynomials1.getPolynomial().get(entry.getKey()) - polynomials2.getPolynomial().get(entry.getKey());
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), newResult);
-                }
-                else
-                {
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), entry.getValue());
-                }
-            }
-            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
-            {
-                if(!resultPolynomial1.getPolynomial().containsKey(entry.getKey()))
-                {
-                    resultPolynomial1.getPolynomial().put(entry.getKey(), -entry.getValue());
-                }
-            }
+              resultPolynomial1 = operations.substraction(polynomials1,polynomials2);
             polynomials1.displayResultedPolynomInOrder("sub", resultPolynomial1,calculatorView);
         }
     }
@@ -170,14 +130,7 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
 
             refreshHashMaps();
             read();
-
-            for (Map.Entry<Integer, Double> entry1 : polynomials1.getPolynomial().entrySet())
-            {
-                for (Map.Entry<Integer, Double> entry2 : polynomials2.getPolynomial().entrySet())
-                {
-                    resultPolynomial1.getPolynomial().put(entry1.getKey()+entry2.getKey(),entry1.getValue()*entry2.getValue());
-                }
-            }
+            resultPolynomial1 = operations.multiplication(polynomials1,polynomials2);
             polynomials1.displayResultedPolynomInOrder("mul",resultPolynomial1,calculatorView);
 
         }
@@ -191,34 +144,10 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
                 read();
                // HashMap<Integer, Double> remainder = new HashMap<>(polynomials1.getPolynomial());
 
-                while (polynomials1.getPolynomial().size() >= polynomials2.getPolynomial().size()) {
-                    // Get the highest power terms of the dividend and divisor
-                    int dividendPower = Collections.max(polynomials1.getPolynomial().keySet());
-                    int divisorPower = Collections.max(polynomials2.getPolynomial().keySet());
-
-                    // Calculate the coefficient and power of the next term in the quotient
-                    double quotientCoefficient = polynomials1.getPolynomial().get(dividendPower) / polynomials2.getPolynomial().get(divisorPower);
-                    int quotientPower = dividendPower - divisorPower;
-
-                    // Add the next term to the quotient
-                    resultPolynomial1.getPolynomial().put(quotientPower, quotientCoefficient);
-
-                    // Subtract the divisor times the next term in the quotient from the remainder
-                    for (int power : polynomials2.getPolynomial().keySet()) {
-                        double coefficient = polynomials2.getPolynomial().get(power) * quotientCoefficient;
-                        int remainderPower = power + quotientPower;
-                        double remainderCoefficient = polynomials1.getPolynomial().getOrDefault(remainderPower, 0.0);
-                        polynomials1.getPolynomial().put(remainderPower, remainderCoefficient - coefficient);
-                    }
-
-                    // Remove any terms with zero coefficients from the remainder
-                    polynomials1.getPolynomial().entrySet().removeIf(entry -> entry.getValue() == 0);
-                }
                 //make the sum between the two hashmaps
 
-                  sum(polynomials1,resultPolynomial1,resultPolynomials2);
+                resultPolynomials2 = operations.division(polynomials1,polynomials2);
                 polynomials1.displayResultedPolynomInOrder("div",resultPolynomials2,calculatorView);
-
         }
     }
 
@@ -230,63 +159,22 @@ public  CalculatorController(CalculatorView calculatorView, Polynomials polynomi
             refreshHashMaps();
             read();
 
-            double newCoefficient;
-            int newPower;
-            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet())
-            {
-                if(entry.getKey()>0)
-                {
-                    newCoefficient = entry.getKey() * entry.getValue();
-                    newPower = entry.getKey() - 1;
-                    resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
-                }
-            }
-            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
-            {
-                if(entry.getKey()>0)
-                {
-                    newCoefficient = entry.getKey() * entry.getValue();
-                    newPower = entry.getKey() - 1;
-                    resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
-                }
-            }
+            resultPolynomial1 = operations.derivation(polynomials1);
             polynomials1.displayResultedPolynomInOrder("der1",resultPolynomial1,calculatorView);
+            resultPolynomials2 = operations.derivation(polynomials2);
             polynomials2.displayResultedPolynomInOrder("der2",resultPolynomials2,calculatorView);
 
         }
     }
-
     class IntegrationListener implements ActionListener
     {
         @Override
         public void actionPerformed(ActionEvent e) {
             refreshHashMaps();
             read();
-            double newCoefficient;
-            int newPower;
-
-
-            for (Map.Entry<Integer, Double> entry : polynomials1.getPolynomial().entrySet())
-            {
-                if(entry.getKey() >=0)
-                {
-                    newPower = entry.getKey()+1;
-                    newCoefficient = entry.getValue() / newPower;
-
-                    resultPolynomial1.getPolynomial().put(newPower,newCoefficient);
-                }
-            }
-           polynomials1.displayResultedPolynomInOrder("int1",resultPolynomial1,calculatorView);
-            for (Map.Entry<Integer, Double> entry : polynomials2.getPolynomial().entrySet())
-            {
-                if(entry.getKey() >=0)
-                {
-                    newPower = entry.getKey()+1;
-                    newCoefficient = entry.getValue() / newPower;
-
-                    resultPolynomials2.getPolynomial().put(newPower,newCoefficient);
-                }
-            }
+            resultPolynomial1 = operations.integration(polynomials1);
+            polynomials1.displayResultedPolynomInOrder("int1",resultPolynomial1,calculatorView);
+            resultPolynomials2 = operations.integration(polynomials2);
             polynomials2.displayResultedPolynomInOrder("int2",resultPolynomials2,calculatorView);
         }
     }
