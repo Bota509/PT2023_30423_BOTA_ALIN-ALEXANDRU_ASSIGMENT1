@@ -4,7 +4,6 @@ import mvk.View.CalculatorView;
 import mvk.models.Monom;
 import mvk.models.Operations;
 import mvk.models.Polynomials;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,9 +73,8 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
         public void actionPerformed(ActionEvent e) {
             refreshHashMaps();
                read();
-
             resultPolynomial1 = operations.sum(polynomials1, polynomials2);
-            polynomials1.displayResultedPolynomInOrder("sum", resultPolynomial1,calculatorView);
+            polynomials1.displayResultedPolynomialInOrder("sum", resultPolynomial1,calculatorView);
         }
     }
 
@@ -87,7 +85,7 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
             refreshHashMaps();
               read();
               resultPolynomial1 = operations.substraction(polynomials1,polynomials2);
-            polynomials1.displayResultedPolynomInOrder("sub", resultPolynomial1,calculatorView);
+            polynomials1.displayResultedPolynomialInOrder("sub", resultPolynomial1,calculatorView);
         }
     }
 
@@ -99,7 +97,7 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
             refreshHashMaps();
             read();
             resultPolynomial1 = operations.multiplication(polynomials1,polynomials2);
-            polynomials1.displayResultedPolynomInOrder("mul",resultPolynomial1,calculatorView);
+            polynomials1.displayResultedPolynomialInOrder("mul",resultPolynomial1,calculatorView);
 
         }
     }
@@ -115,7 +113,7 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
                 //make the sum between the two hashmaps
 
                 resultPolynomials2 = operations.division(polynomials1,polynomials2);
-                polynomials1.displayResultedPolynomInOrder("div",resultPolynomials2,calculatorView);
+                polynomials1.displayResultedPolynomialInOrder("div",resultPolynomials2,calculatorView);
         }
     }
 
@@ -128,9 +126,9 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
             read();
 
             resultPolynomial1 = operations.derivation(polynomials1);
-            polynomials1.displayResultedPolynomInOrder("der1",resultPolynomial1,calculatorView);
+            polynomials1.displayResultedPolynomialInOrder("der1",resultPolynomial1,calculatorView);
             resultPolynomials2 = operations.derivation(polynomials2);
-            polynomials2.displayResultedPolynomInOrder("der2",resultPolynomials2,calculatorView);
+            polynomials2.displayResultedPolynomialInOrder("der2",resultPolynomials2,calculatorView);
 
         }
     }
@@ -141,9 +139,9 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
             refreshHashMaps();
             read();
             resultPolynomial1 = operations.integration(polynomials1);
-            polynomials1.displayResultedPolynomInOrder("int1",resultPolynomial1,calculatorView);
+            polynomials1.displayResultedPolynomialInOrder("int1",resultPolynomial1,calculatorView);
             resultPolynomials2 = operations.integration(polynomials2);
-            polynomials2.displayResultedPolynomInOrder("int2",resultPolynomials2,calculatorView);
+            polynomials2.displayResultedPolynomialInOrder("int2",resultPolynomials2,calculatorView);
         }
     }
 }

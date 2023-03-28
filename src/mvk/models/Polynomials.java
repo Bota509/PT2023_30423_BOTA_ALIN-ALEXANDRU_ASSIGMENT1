@@ -43,7 +43,7 @@ private HashMap<Integer,Double> polynomial = new HashMap<>();
         }
     }
 
-    public void displayResultedPolynomInOrder(String type, Polynomials resultPolynomial,CalculatorView calculatorView) {
+    public void displayResultedPolynomialInOrder(String type, Polynomials resultPolynomial, CalculatorView calculatorView) {
         TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
         //from the hashmap in order by key -> in this case the power
 
