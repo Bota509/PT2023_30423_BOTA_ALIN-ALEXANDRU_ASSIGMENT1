@@ -1,10 +1,9 @@
 package mvk.models;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+
 import java.util.Collections;
 import java.util.Map;
-import java.util.TreeMap;
+
 
 public class Operations {
 
@@ -99,40 +98,7 @@ public class Operations {
         return resultPolynomial1;
     }
 
-    public  String trTostring(Polynomials resultPolynomial) {
-        TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
-        //from the hashmap in order by key -> in this case the power
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.DOWN); //to format de double result in a maximum of 2 decimals
-
-        sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
-        StringBuilder stringBuilder = new StringBuilder();
-        String resultString;
-        for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
-        {
-            String coefficientInString = df.format(entry.getValue());
-            String powerInString = entry.getKey().toString();
-            if(entry.getValue()!=0.0 ) {
-
-                if(entry.getKey()!=0) {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString).append("x^").append(entry.getKey());
-                    else
-                        stringBuilder.append(" ").append(coefficientInString).append("x^").append(entry.getKey());
-                }
-                else if(entry.getKey() == 0)
-                {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString);
-                    else
-                        stringBuilder.append(" ").append(coefficientInString);
-                }
-            }
-        }
-        resultString = stringBuilder.toString();
-        return resultString;
-    }
     public Polynomials division(Polynomials polynomials1,Polynomials polynomials2)
     {
         while (polynomials1.getPolynomial().size() >= polynomials2.getPolynomial().size()) {
