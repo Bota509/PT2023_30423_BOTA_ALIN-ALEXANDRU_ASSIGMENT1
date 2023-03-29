@@ -1,6 +1,7 @@
 package mvk.models;
 
 import mvk.View.CalculatorView;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -44,37 +45,7 @@ private HashMap<Integer,Double> polynomial = new HashMap<>();
     }
 
     public void displayResultedPolynomialInOrder(String type, Polynomials resultPolynomial, CalculatorView calculatorView) {
-        TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
-        //from the hashmap in order by key -> in this case the power
-
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.DOWN); //to format de double result in a maximum of 2 decimals
-
-        sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
-        StringBuilder stringBuilder = new StringBuilder();
-        String resultString;
-        for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
-        {
-            String coefficientInString = df.format(entry.getValue());
-            String powerInString = entry.getKey().toString();
-            if(entry.getValue()!=0.0 ) {
-
-                if(entry.getKey()!=0) {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString).append("x^").append(entry.getKey());
-                    else
-                        stringBuilder.append(" ").append(coefficientInString).append("x^").append(entry.getKey());
-                }
-                else if(entry.getKey() == 0)
-                {
-                    if (entry.getValue() > 0.0)
-                        stringBuilder.append(" +").append(coefficientInString);
-                    else
-                        stringBuilder.append(" ").append(coefficientInString);
-                }
-            }
-        }
-        resultString = stringBuilder.toString();
+        String resultString = transformToString(resultPolynomial);
         if(resultString.equals(""))
         {
             resultString = "0";
@@ -109,5 +80,41 @@ private HashMap<Integer,Double> polynomial = new HashMap<>();
             System.out.println("Error");
         }
 
+    }
+
+    @NotNull
+    public  String transformToString(Polynomials resultPolynomial) {
+        TreeMap<Integer, Double> sortedDescendingdMap = new TreeMap<>(Collections.reverseOrder());//implement a treeMap to put the elements
+        //from the hashmap in order by key -> in this case the power
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.DOWN); //to format de double result in a maximum of 2 decimals
+
+        sortedDescendingdMap.putAll(resultPolynomial.getPolynomial());
+        StringBuilder stringBuilder = new StringBuilder();
+        String resultString;
+        for (Map.Entry<Integer, Double> entry : sortedDescendingdMap.entrySet())
+        {
+            String coefficientInString = df.format(entry.getValue());
+            String powerInString = entry.getKey().toString();
+            if(entry.getValue()!=0.0 ) {
+
+                if(entry.getKey()!=0) {
+                    if (entry.getValue() > 0.0)
+                        stringBuilder.append(" +").append(coefficientInString).append("x^").append(entry.getKey());
+                    else
+                        stringBuilder.append(" ").append(coefficientInString).append("x^").append(entry.getKey());
+                }
+                else if(entry.getKey() == 0)
+                {
+                    if (entry.getValue() > 0.0)
+                        stringBuilder.append(" +").append(coefficientInString);
+                    else
+                        stringBuilder.append(" ").append(coefficientInString);
+                }
+            }
+        }
+        resultString = stringBuilder.toString();
+        return resultString;
     }
 }
