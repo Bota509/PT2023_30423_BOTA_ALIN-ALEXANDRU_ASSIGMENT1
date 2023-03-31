@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
+
 public class CalculatorController {
 //clasa care se ocupa de actiunile pe care le face utilizatorul
 private CalculatorView calculatorView;
@@ -18,12 +19,14 @@ private Polynomials polynomials2;
 private Polynomials polynomials;
 private Polynomials resultPolynomial1;
 private Polynomials resultPolynomials2;
+private Polynomials[] divisionPolynomials;
 private Operations operations;
 private Monom monom;
 
 
 public  CalculatorController(CalculatorView calculatorView,Polynomials polynomials, Polynomials polynomials1,Polynomials polynomials2,
-                             Polynomials resultPolynomials1,Polynomials resultPolynomials2,Operations operations,Monom monom)
+                             Polynomials resultPolynomials1,Polynomials resultPolynomials2,Operations operations,Monom monom,
+                             Polynomials[] divisionPolynomials)
 {
     this.calculatorView = calculatorView;
     this.polynomials1 = polynomials1;
@@ -33,6 +36,7 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
     this.operations = operations;
     this.polynomials = polynomials;
     this.monom = monom;
+    this.divisionPolynomials = divisionPolynomials;
 
     this.calculatorView.sumListener(new SumListener());
     this.calculatorView.substractionListener(new SubstractionListener());
@@ -111,9 +115,14 @@ public  CalculatorController(CalculatorView calculatorView,Polynomials polynomia
                // HashMap<Integer, Double> remainder = new HashMap<>(polynomials1.getPolynomial());
 
                 //make the sum between the two hashmaps
+               calculatorView.setTextAreaDivisionText("");
 
-                resultPolynomials2 = operations.division(polynomials1,polynomials2);
-                polynomials1.displayResultedPolynomialInOrder("div",resultPolynomials2,calculatorView);
+                divisionPolynomials = operations.division(polynomials1,polynomials2);
+
+                polynomials1.displayResultedPolynomialInOrder("div",divisionPolynomials[0],calculatorView);
+            calculatorView.setTextAreaDivisionText(calculatorView.getTextAreaDivisionText() + " r :");
+            polynomials1.displayResultedPolynomialInOrder("div",divisionPolynomials[1],calculatorView);
+
         }
     }
 

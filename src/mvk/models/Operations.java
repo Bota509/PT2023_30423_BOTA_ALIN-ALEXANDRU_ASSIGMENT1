@@ -99,7 +99,7 @@ public class Operations {
     }
 
 
-    public Polynomials division(Polynomials polynomials1,Polynomials polynomials2)
+    public Polynomials[] division(Polynomials polynomials1,Polynomials polynomials2)
     {
         while (polynomials1.getPolynomial().size() >= polynomials2.getPolynomial().size()) {
             // Get the highest power terms of the dividend and divisor
@@ -124,9 +124,9 @@ public class Operations {
             // Remove any terms with zero coefficients from the remainder
             polynomials1.getPolynomial().entrySet().removeIf(entry -> entry.getValue() == 0);
         }
-        resultPolynomial2 = sum(polynomials1,resultPolynomial1);
+        //resultPolynomial2 = sum(polynomials1,resultPolynomial1);
 
-        return resultPolynomial2;
+        return new Polynomials[]{resultPolynomial1/*quotient*/, polynomials1/*remainder*/};
     }
 
 }

@@ -73,7 +73,7 @@ private HashMap<Integer,Double> polynomial = new HashMap<>();
         }
         else  if (type.equals("div"))
         {
-            calculatorView.setTextAreaDivisionText(resultString);
+            calculatorView.setTextAreaDivisionText(calculatorView.getTextAreaDivisionText() + resultString);
         }
         else
         {

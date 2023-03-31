@@ -15,10 +15,11 @@ public class main {
         Polynomials resultPolynomials2 = new Polynomials();
         Polynomials polynomials = new Polynomials();
         Monom monom = new Monom();
+        Polynomials[] divisionPolynomials = new Polynomials[]{new Polynomials(),new Polynomials()};
 
         Operations operations = new Operations(resultPolynomials1,resultPolynomials2);
         CalculatorView calculatorView = new CalculatorView();
-        CalculatorController calculatorController = new CalculatorController(calculatorView,polynomials,polynomials1,polynomials2,resultPolynomials1,resultPolynomials2,operations,monom);
+        CalculatorController calculatorController = new CalculatorController(calculatorView,polynomials,polynomials1,polynomials2,resultPolynomials1,resultPolynomials2,operations,monom,divisionPolynomials);
 
     }
 }
